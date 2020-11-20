@@ -1,0 +1,58 @@
+openapi: "3.0.0"
+info:
+  title: E-Bank Exchange Rate Swagger
+  description: Exchange Rate service for E-bank application.
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: tomasz.palka@capgemini.com
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+  version: "1.0.0"
+servers:
+  - url: "{protocol}://10.40.234.149:{port}"
+    variables:
+      protocol:
+        enum:
+          - "http"
+        default: "http"
+      port:
+        enum:
+          - "8081"
+        default: "8081"
+tags:
+  - name: exchangerate
+    description: Currency exchange rate operation
+paths:
+  "/exchangeRate":
+    get:
+      tags:
+        - exchangerate
+      summary: Get exchange rate for currencies
+      operationId: getExchangeRate
+      parameters:
+        - name: baseCurrency
+          in: query
+          description: 'Three letter-code of the currency from which to exchange.'
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Z]{3}$
+        - name: targetCurrency
+          in: query
+          description: 'Three letter-code of the currency to which to exchange.'
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Z]{3}$
+      responses:
+        "200":
+          description: Exchange rate between currencies
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+        "422":
+            description: Wrong parameter values (unsupported currency)
+            content: {}
