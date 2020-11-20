@@ -16,6 +16,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>11</java.version>
     <spring.mainClass>com.example.exchangerate.microservice.ExchangeRateApplication</spring.mainClass>
+
+    <!-- Consumer Driven Contract -->
+    <spring-cloud-contract.version>2.2.4.RELEASE</spring-cloud-contract.version>
   </properties>
 
   <dependencies>
@@ -34,6 +37,43 @@
       <artifactId>spring-cloud-starter</artifactId>
       <version>2.2.6.RELEASE</version>
     </dependency>
+
+    <!-- Consumer Driver contract  -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+      <version>${spring-cloud-contract.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-junit-jupiter</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>3.6.0</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -43,6 +83,21 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <mainClass>${spring.mainClass}</mainClass>
+        </configuration>
+      </plugin>
+
+      <!-- Consumer Driver contract  -->
+      <plugin>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+        <version>${spring-cloud-contract.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <contractsDirectory>${project.basedir}/src/test/resources/contracts</contractsDirectory>
+          <!-- Create package name for your auto-generated tests -->
+          <basePackageForTests>com.example.exchangerate.microservice.autogenerate</basePackageForTests>
+          <!-- If there’s a contract under /com/example/ebank/api/<folderName>/*.groovy` then we’ll search for a <folderName>Base.java files -->
+          <packageWithBaseClasses>com.example.exchangerate.microservice.api</packageWithBaseClasses>
         </configuration>
       </plugin>
     </plugins>
