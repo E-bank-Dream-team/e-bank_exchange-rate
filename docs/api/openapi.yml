@@ -33,14 +33,14 @@ paths:
       parameters:
         - name: baseCurrency
           in: query
-          description: 'Three letter-code of the currency from which to exchange.'
+          description: "Three letter-code of the currency from which to exchange."
           required: true
           schema:
             type: string
             pattern: ^[A-Z]{3}$
         - name: targetCurrency
           in: query
-          description: 'Three letter-code of the currency to which to exchange.'
+          description: "Three letter-code of the currency to which to exchange."
           required: true
           schema:
             type: string
@@ -51,8 +51,11 @@ paths:
           content:
             application/json:
               schema:
-                type: number
-                format: double
+                type: object
+                properties:
+                  value:
+                    type: number
+                    format: double
         "422":
-            description: Wrong parameter values (unsupported currency)
-            content: {}
+          description: Wrong parameter values (unsupported currency)
+          content: {}
