@@ -2,21 +2,27 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
 	description("""
-		Represents a successful scenario of get account attached to customer
+		Represents a successful scenario to get exchange rate
 		
 		```
 		given:
-			/api/v1/customers/{customerID}/accounts/{accountId} endpoint
+			/exchangeRate endpoint
 		when:
 			make GET request
 		then:
-			we'll get account for E-Bank application
+			we'll get exchange rate calculation
 		```
 		
 		""")
 	request {
 		method('GET')
-		url( $(p("api/v1/customers/1/accounts/1"), c("api/v1/customers/${regex('[0-9]+')}/accounts/${regex('[0-9]+')}")) )
+		url( "/exchangeRate" ){
+			queryParameters {
+					def CURRENCY_CODE = '[A-Z]{3}'
+					parameter 'baseCurrency': value(consumer(matching(CURRENCY_CODE)), producer('EUR'))
+					parameter 'targetCurrency': value(consumer(matching(CURRENCY_CODE)), producer('GBP'))
+				}
+		}
 		headers {
 			contentType(applicationJson())
 		}
@@ -26,29 +32,11 @@ Contract.make {
 		headers {
 			contentType(applicationJson())
 		}
-		def CURRENCY_CODE = '[A-Z]{3}'
-		def IBAN = '[A-Z]{2}\\d{2}[A-Z0-9]{4}\\d{0,26}'
 		body([
-			id      : fromRequest().path(5), // get {accountId}
-			name    : "Account 1",
-			iban    : "PL10105009976312345678913",
-			currency: [
-				code: "PLN"
-			],
-			balance : [
-				value   : 123.12,
-				currency: [
-					code: "PLN"
-				]
-			]
+			value      : 0.90872
 		])
 		bodyMatchers {
-			jsonPath('id', byRegex(number()).asInteger())
-			jsonPath('name', byRegex('.+').asString())
-			jsonPath('iban', byRegex(IBAN).asString())
-			jsonPath('currency.code', byRegex(CURRENCY_CODE).asString())
-			jsonPath('balance.value', byRegex(aDouble()).asDouble())
-			jsonPath('balance.currency.code', byRegex(CURRENCY_CODE).asString())
+			jsonPath('value', byRegex(aDouble()).asDouble())
 		}
 	}
 }
