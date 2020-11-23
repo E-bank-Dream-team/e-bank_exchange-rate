@@ -19,6 +19,8 @@
 
     <!-- Consumer Driven Contract -->
     <spring-cloud-contract.version>2.2.4.RELEASE</spring-cloud-contract.version>
+    <openapitools-version>4.3.1</openapitools-version>
+    <mapstruct-version>1.4.1.Final</mapstruct-version>
   </properties>
 
   <dependencies>
@@ -79,10 +81,62 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>openapi-generator</artifactId>
+      <version>${openapitools-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <version>0.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${mapstruct-version}</version>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapitools-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorName>spring</generatorName>
+              <inputSpec>${project.basedir}/docs/api/openapi.yml</inputSpec>
+              <configOptions>
+                <sourceFolder>src/main/java</sourceFolder>
+                <library>spring-boot</library>
+                <dateLibrary>java11</dateLibrary>
+                <java11>true</java11>
+                <interfaceOnly>true</interfaceOnly>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <useTags>true</useTags>
+              </configOptions>
+              <modelPackage>com.example.exchangerate.generated.dto</modelPackage>
+              <modelNameSuffix>Dto</modelNameSuffix>
+              <apiPackage>com.example.exchangerate.generated.api</apiPackage>
+              <generateSupportingFiles>false</generateSupportingFiles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
