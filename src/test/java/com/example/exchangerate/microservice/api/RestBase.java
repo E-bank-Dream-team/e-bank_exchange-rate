@@ -5,12 +5,15 @@ import static org.mockito.BDDMockito.given;
 import java.util.Map;
 
 import com.example.exchangerate.microservice.controllers.ExchangeRateController;
+import com.example.exchangerate.microservice.mappers.ExchangeRateResponseMapper;
+import com.example.exchangerate.microservice.mappers.ExchangeRateResponseMapperImpl;
 import com.example.exchangerate.microservice.services.ExchangeRateService;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -21,6 +24,9 @@ public abstract class RestBase {
 
     @Mock
     ExchangeRateService exchangeRateService;
+
+    @Spy
+    ExchangeRateResponseMapper exchangeRateResponseMapper = new ExchangeRateResponseMapperImpl();
 
     @InjectMocks
     ExchangeRateController exchangeRateController;
@@ -40,7 +46,7 @@ public abstract class RestBase {
         Double targetRate = exchangeRatesToEUR.get(targetCurrency);
         Double baseRate = exchangeRatesToEUR.get(baseCurrency);
         if (targetRate == null || baseRate == null) {
-            throw new RuntimeException("Unknown currency: " + baseCurrency + " or " + targetCurrency);
+            throw new IllegalArgumentException("Unknown currency: " + baseCurrency + " or " + targetCurrency);
         }
         return targetRate / baseRate;
     }
